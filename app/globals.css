@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --wm-blue: #1d429b;
+  --wm-orange: #f89b24;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #000000;
+  color: #fff;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* total black space — just a hair of depth */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -20;
+  background: radial-gradient(circle at 50% 45%, #06080f 0%, #000000 62%);
+}
+
+@layer components {
+  .slide {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12vh 7vw;
+    transform-style: preserve-3d;
+  }
+  .slide-center {
+    justify-content: center;
+    text-align: center;
+  }
+  .slide-inner {
+    width: 100%;
+    max-width: 1080px;
+  }
+  .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--wm-orange);
+  }
+  .kicker-blue {
+    color: #afc3ee;
+  }
+  /* frameless: content floats directly in space */
+  .glass {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+  .display {
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+  }
+  .or {
+    color: var(--wm-orange);
+  }
+  .lav {
+    color: #a9b8ff;
+  }
+  .mist {
+    color: #afc3ee;
+  }
+}
+
+/* ───── horizontal 3D orbit of planet-slides ───── */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+.planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(880px, 92vw);
+  will-change: transform, opacity;
+  transform: translate(-50%, -50%);
+}
+.planet-card {
+  position: relative;
+  padding: clamp(20px, 3.4vw, 44px);
+  max-height: 88vh;
+  overflow: hidden;
+  /* heavy black glow so floating text always pops over the galaxy — no frame */
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.97), 0 0 8px rgba(0, 0, 0, 0.95), 0 0 44px rgba(0, 0, 0, 0.8);
+}
+
+/* glitch / pixel transition when landing on a new planet (brand orange + blue split) */
+@keyframes glitchIn {
+  0% {
+    opacity: 0;
+    transform: translate(10px, 0) skewX(7deg);
+    text-shadow: 5px 0 #f89b24, -5px 0 #2f6bff;
+    clip-path: inset(44% 0 42% 0);
+  }
+  28% {
+    opacity: 1;
+    transform: translate(-7px, 0) skewX(-3deg);
+    text-shadow: -5px 0 #f89b24, 5px 0 #2f6bff;
+    clip-path: inset(2% 0 56% 0);
+  }
+  52% {
+    transform: translate(5px, 0);
+    text-shadow: 3px 0 #2f6bff, -3px 0 #f89b24;
+    clip-path: inset(58% 0 4% 0);
+  }
+  74% {
+    transform: translate(-2px, 0);
+    text-shadow: 2px 0 #f89b24, -2px 0 #2f6bff;
+    clip-path: inset(26% 0 30% 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.97), 0 0 8px rgba(0, 0, 0, 0.95), 0 0 44px rgba(0, 0, 0, 0.8);
+    clip-path: none;
+  }
+}
+.planet-enter {
+  animation: glitchIn 0.5s steps(3, end) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .planet-enter {
+    animation: none;
+  }
+}
+
+/* subtle scroll hint bob */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+.bob { animation: bob 2.2s ease-in-out infinite; }
