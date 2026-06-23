@@ -257,7 +257,7 @@ export const slides: Slide[] = [
     align: "start",
     node: (
       <div>
-        <Kicker orange>Marco Aurelio · La coherencia</Kicker>
+        <Kicker><span className="or">Marco Aurelio</span> · La coherencia</Kicker>
         <h2 className="mt-3 text-4xl md:text-6xl">
           <span className="font-normal text-white">Pensar, hablar y actuar — </span>
           <span className="display teal">en acuerdo</span>
