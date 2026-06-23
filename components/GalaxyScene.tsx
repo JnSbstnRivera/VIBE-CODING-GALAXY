@@ -322,7 +322,7 @@ export default function GalaxyScene() {
       <Galaxy />
 
       {positions.map((p, i) => (
-        <Planet key={i} i={i} pos={p} color={ACCENTS[i % ACCENTS.length]} ring={i === 3 || i === 7 || i === 11} />
+        <Planet key={i} i={i} pos={p} color={ACCENTS[i % ACCENTS.length]} ring={i === 2 || i === 5 || i === 8} />
       ))}
       {positions.slice(0, -1).map((p, i) => (
         <Line
