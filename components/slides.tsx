@@ -53,7 +53,7 @@ export const slides: Slide[] = [
         <Kicker>Vibe Code &amp; Willpower</Kicker>
         <div className="relative mt-2 h-[44vh] min-h-[280px] w-full">
           <h1 className="sr-only">La Intención Pura</h1>
-          <ParticleText text="INTENCIÓN PURA" className="absolute inset-0 h-full w-full" />
+          <ParticleText text="VIBE CODE" className="absolute inset-0 h-full w-full" />
         </div>
         <p className="mt-2 max-w-3xl text-[21px] leading-relaxed text-white/85">
           Un recorrido desde la teoría de <strong className="font-bold text-white">Claude Shannon</strong> hasta el{" "}
