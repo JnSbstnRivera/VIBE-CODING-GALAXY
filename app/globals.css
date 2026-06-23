@@ -52,14 +52,15 @@ body::before {
     max-width: 1080px;
   }
   .kicker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     font-size: 12px;
     font-weight: 700;
-    color: var(--wm-orange);
+    color: #2ee6c5;
   }
-  .kicker-blue {
-    color: #afc3ee;
+  .kicker-cyan {
+    color: #67d4ff;
   }
   /* frameless: content floats directly in space */
   .glass {
@@ -75,11 +76,14 @@ body::before {
   .or {
     color: var(--wm-orange);
   }
+  .teal {
+    color: #2ee6c5;
+  }
   .lav {
-    color: #a9b8ff;
+    color: #2ee6c5;
   }
   .mist {
-    color: #afc3ee;
+    color: #8fb8c9;
   }
 }
 
@@ -114,23 +118,23 @@ body::before {
   0% {
     opacity: 0;
     transform: translate(10px, 0) skewX(7deg);
-    text-shadow: 5px 0 #f89b24, -5px 0 #2f6bff;
+    text-shadow: 5px 0 #f89b24, -5px 0 #2ee6c5;
     clip-path: inset(44% 0 42% 0);
   }
   28% {
     opacity: 1;
     transform: translate(-7px, 0) skewX(-3deg);
-    text-shadow: -5px 0 #f89b24, 5px 0 #2f6bff;
+    text-shadow: -5px 0 #f89b24, 5px 0 #2ee6c5;
     clip-path: inset(2% 0 56% 0);
   }
   52% {
     transform: translate(5px, 0);
-    text-shadow: 3px 0 #2f6bff, -3px 0 #f89b24;
+    text-shadow: 3px 0 #2ee6c5, -3px 0 #f89b24;
     clip-path: inset(58% 0 4% 0);
   }
   74% {
     transform: translate(-2px, 0);
-    text-shadow: 2px 0 #f89b24, -2px 0 #2f6bff;
+    text-shadow: 2px 0 #f89b24, -2px 0 #2ee6c5;
     clip-path: inset(26% 0 30% 0);
   }
   100% {

@@ -3,11 +3,11 @@ import ParticleText from "./ParticleText";
 
 type Slide = { id: string; label: string; align: "start" | "center"; node: ReactNode };
 
-const Kicker = ({ children, orange }: { children: ReactNode; orange?: boolean }) => (
-  <div className={orange ? "kicker" : "kicker kicker-blue"}>{children}</div>
+const Kicker = ({ children, cyan }: { children: ReactNode; cyan?: boolean }) => (
+  <div className={cyan ? "kicker kicker-cyan" : "kicker"}>{children}</div>
 );
 
-// reusable numbered / titled card
+// frameless titled item (icon/word + title + text)
 const InfoCard = ({
   tag,
   title,
@@ -15,39 +15,52 @@ const InfoCard = ({
   bebas,
   orange,
 }: {
-  tag: string;
+  tag: ReactNode;
   title: string;
   children: ReactNode;
   bebas?: boolean;
   orange?: boolean;
 }) => (
-  <div className="glass p-5">
-    <div className={`${bebas ? "font-bebas text-3xl" : "text-2xl font-extrabold"} ${orange ? "or" : "lav"} leading-none`}>
+  <div className="glass p-3">
+    <div className={`${bebas ? "font-bebas text-3xl" : "text-2xl font-extrabold"} ${orange ? "or" : "teal"} leading-none`}>
       {tag}
     </div>
-    <div className="mt-2 text-[17px] font-extrabold text-white">{title}</div>
-    <p className="mt-1 text-sm text-white/85">{children}</p>
+    <div className="mt-2 text-[18px] font-extrabold text-white">{title}</div>
+    <p className="mt-1 text-[15px] leading-relaxed text-white/85">{children}</p>
+  </div>
+);
+
+const Portrait = ({ src, alt }: { src: string; alt: string }) => (
+  <div className="flex justify-center">
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src={src}
+      alt={alt}
+      className="h-52 w-52 rounded-full object-cover md:h-64 md:w-64"
+      style={{ boxShadow: "0 0 0 2px rgba(46,230,197,0.6), 0 0 80px -6px rgba(46,230,197,0.6)" }}
+    />
   </div>
 );
 
 export const slides: Slide[] = [
-  // ───────────────────────── 0 · HERO
+  // ───────────────────────── 0 · INTRO
   {
     id: "s0",
-    label: "Hero",
+    label: "La Intención Pura",
     align: "center",
     node: (
       <div className="flex flex-col items-center">
-        <Kicker>Andrej Karpathy · El arte de programar</Kicker>
-        <div className="relative mt-2 h-[46vh] min-h-[300px] w-full">
-          <h1 className="sr-only">Vibe Coding</h1>
-          <ParticleText text="VIBE CODING" className="absolute inset-0 h-full w-full" />
+        <Kicker>Vibe Code &amp; Willpower</Kicker>
+        <div className="relative mt-2 h-[44vh] min-h-[280px] w-full">
+          <h1 className="sr-only">La Intención Pura</h1>
+          <ParticleText text="INTENCIÓN PURA" className="absolute inset-0 h-full w-full" />
         </div>
-        <p className="mt-2 max-w-2xl text-[22px] text-white/80">
-          Dejarse llevar por <strong className="font-extrabold text-white">las vibras del código</strong>. Y por qué,
-          en el fondo, los <strong className="font-extrabold or">fundamentos</strong> siguen mandando.
+        <p className="mt-2 max-w-3xl text-[21px] leading-relaxed text-white/85">
+          Un recorrido desde la teoría de <strong className="font-bold text-white">Claude Shannon</strong> hasta el{" "}
+          <strong className="font-bold text-white">vibe coding</strong> de Andrej Karpathy, unificados bajo la mirada de{" "}
+          <strong className="font-bold text-white">Hermann Hesse</strong>.
         </p>
-        <div className="mt-10 flex items-center gap-2 text-xs uppercase tracking-[0.2em] mist bob">
+        <div className="mt-8 flex items-center gap-2 text-xs uppercase tracking-[0.2em] mist bob">
           <span>Desplázate para explorar el cosmos</span>
           <span className="text-base">↓</span>
         </div>
@@ -55,363 +68,403 @@ export const slides: Slide[] = [
     ),
   },
 
-  // ───────────────────────── 1 · QUIÉN ES
+  // ───────────────────────── 1 · SHANNON (sección)
   {
     id: "s1",
-    label: "Quién es",
-    align: "start",
-    node: (
-      <div className="grid items-center gap-8 md:grid-cols-[260px_1fr]">
-        <div className="flex justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/karpathy.jpg"
-            alt="Andrej Karpathy"
-            className="h-48 w-48 rounded-full object-cover md:h-60 md:w-60"
-            style={{ boxShadow: "0 0 0 2px rgba(248,155,36,0.65), 0 0 70px -6px rgba(248,155,36,0.75)" }}
-          />
-        </div>
-        <div>
-          <Kicker orange>¿Quién es?</Kicker>
-          <h2 className="mt-2 text-5xl md:text-7xl">
-            <span className="font-normal text-white">Andrej </span>
-            <span className="display text-white">Karpathy</span>
-          </h2>
-          <p className="mt-4 max-w-xl text-[20px] leading-relaxed text-white/85">
-            Una de las voces más influyentes de la IA moderna.{" "}
-            <strong className="font-bold text-white">Miembro fundador de OpenAI</strong>, ex–director de IA en{" "}
-            <strong className="font-bold text-white">Tesla</strong> y profesor en{" "}
-            <strong className="font-bold text-white">Stanford</strong>.
-          </p>
-          <p className="mt-5 text-xl font-extrabold leading-snug text-white">
-            “El lenguaje de programación más caliente es el inglés.”
-          </p>
-          <div className="mt-2 text-sm mist">— Andrej Karpathy, 2023</div>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 2 · TRAYECTORIA
-  {
-    id: "s2",
-    label: "Trayectoria",
-    align: "start",
-    node: (
-      <div>
-        <Kicker>Trayectoria</Kicker>
-        <h2 className="mt-3 text-4xl md:text-6xl">
-          <span className="font-normal text-white">Una década </span>
-          <span className="display text-white">definiendo la IA</span>
-        </h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            ["2015", "Stanford · CS231n", "Crea y enseña el primer gran curso de deep learning para visión por computador."],
-            ["2015", "OpenAI", "Miembro fundador del laboratorio que hoy define la frontera de la IA."],
-            ["2017", "Tesla · Autopilot", "Director de IA. Lidera la visión del auto que conduce solo."],
-            ["2023", "Regreso a OpenAI", "Vuelve a trabajar en los grandes modelos de lenguaje."],
-            ["2024", "Eureka Labs", "Funda su propia escuela: educación reinventada con IA."],
-          ].map(([y, t, d]) => (
-            <InfoCard key={t} tag={y} title={t} bebas orange>
-              {d}
-            </InfoCard>
-          ))}
-          <div className="glass flex items-center p-5">
-            <p className="text-[13px] mist">
-              De la conducción autónoma a la energía: la misma ingeniería que mueve a Tesla impulsa el{" "}
-              <strong className="text-white">Powerwall</strong> que instalamos.
-            </p>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 3 · EL TUIT
-  {
-    id: "s3",
-    label: "El tweet",
-    align: "start",
-    node: (
-      <div className="grid items-center gap-10 md:grid-cols-2">
-        <div>
-          <Kicker>2 de febrero, 2025</Kicker>
-          <h2 className="mt-3 text-5xl md:text-7xl">
-            <span className="font-normal text-white">El tuit que </span>
-            <span className="display text-white">nombró una era</span>
-          </h2>
-          <p className="mt-5 max-w-xl text-[20px] leading-relaxed text-white/80">
-            Lo escribió como un pensamiento al pasar. Hoy{" "}
-            <strong className="font-extrabold or">+4.5 millones de vistas</strong> después, “vibe coding” es Palabra del
-            Año y un sector de miles de millones.
-          </p>
-        </div>
-        <div className="glass p-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 font-black text-white">
-              AK
-            </div>
-            <div>
-              <div className="font-extrabold text-white">Andrej Karpathy</div>
-              <div className="text-[13px] mist">@karpathy</div>
-            </div>
-          </div>
-          <p className="mt-4 text-[21px] font-medium leading-relaxed text-white">
-            “There&apos;s a new kind of coding I call <span className="font-extrabold or">&apos;vibe coding&apos;</span>,
-            where you fully give in to the vibes, embrace exponentials, and forget that the code even exists.”
-          </p>
-          <p className="mt-3 text-[15px] leading-relaxed text-white/80">
-            “Una nueva forma de programar: te dejas llevar por las vibras, abrazas lo exponencial y te olvidas de que el
-            código existe.”
-          </p>
-          <div className="mt-4 text-[13px] mist">5:17 PM · 2 feb 2025</div>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 4 · QUÉ ES
-  {
-    id: "s4",
-    label: "Qué es",
-    align: "start",
-    node: (
-      <div>
-        <Kicker>¿Qué es, en realidad?</Kicker>
-        <h2 className="mt-3 max-w-4xl text-4xl md:text-6xl leading-snug">
-          <span className="font-normal text-white">“No es realmente programar. </span>
-          <span className="display text-white">Veo cosas, digo cosas, ejecuto y copio-pego</span>
-          <span className="font-normal text-white"> — y casi siempre funciona.”</span>
-        </h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <InfoCard tag="01" title="Describes la intención" bebas>
-            Hablas en lenguaje natural. La IA escribe el código por ti.
-          </InfoCard>
-          <InfoCard tag="02" title="Aceptas sin revisar" bebas>
-            ¿Hay un error? Se lo pegas a la IA y le pides que lo arregle.
-          </InfoCard>
-          <InfoCard tag="03" title="El código crece solo" bebas>
-            Más allá de lo que entiendes. Y ahí empieza el riesgo.
-          </InfoCard>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 5 · SOFTWARE 2.0
-  {
-    id: "s5",
-    label: "Software 2.0",
-    align: "start",
-    node: (
-      <div>
-        <Kicker>Su gran idea · 2017</Kicker>
-        <h2 className="mt-3 text-5xl md:text-7xl">
-          <span className="font-normal text-white">Software </span>
-          <span className="display text-white">2.0</span>
-        </h2>
-        <p className="mt-5 max-w-2xl text-[20px] text-white/80">
-          Mucho antes del vibe coding, Karpathy ya lo había anticipado: la programación estaba cambiando de raíz.
-        </p>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="glass p-6">
-            <div className="text-[15px] font-extrabold mist">Software 1.0</div>
-            <p className="mt-2 text-xl font-semibold text-white">El humano escribe cada instrucción.</p>
-            <p className="mt-2 text-[15px] text-white/85">
-              Líneas de código explícitas. Lógica que tú diseñas, depuras y entiendes paso a paso.
-            </p>
-          </div>
-          <div className="glass p-6">
-            <div className="text-[15px] font-extrabold or">Software 2.0</div>
-            <p className="mt-2 text-xl font-semibold text-white">Los datos escriben el código.</p>
-            <p className="mt-2 text-[15px] text-white/80">
-              Curas datos, entrenas una red neuronal y los <strong className="font-bold text-white">pesos</strong> se
-              vuelven el programa. El vibe coding es su consecuencia natural.
-            </p>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 6 · EL MAESTRO
-  {
-    id: "s6",
-    label: "El maestro",
-    align: "start",
-    node: (
-      <div className="grid gap-10 md:grid-cols-2 md:items-center">
-        <div>
-          <Kicker>El otro Karpathy</Kicker>
-          <h2 className="mt-3 text-4xl md:text-6xl">
-            <span className="font-normal text-white">El mejor profesor de IA </span>
-            <span className="display text-white">enseña desde cero</span>
-          </h2>
-          <p className="mt-5 text-[20px] leading-relaxed text-white/80">
-            El mismo que acuñó “vibe coding” dedica su vida a lo contrario: a que entiendas{" "}
-            <strong className="font-bold text-white">cómo funciona todo por dentro</strong>. Construye una red neuronal,
-            letra por letra, frente a millones de estudiantes.
-          </p>
-          <p className="mt-5 text-[20px] font-bold or">
-            “Para usar bien la IA, primero hay que entender cómo piensa.”
-          </p>
-        </div>
-        <div className="grid gap-4">
-          <InfoCard tag="▶" title="Neural Networks: Zero to Hero">
-            Serie en YouTube: de cero a construir un modelo tipo GPT.
-          </InfoCard>
-          <InfoCard tag="{ }" title="nanoGPT · micrograd">
-            Código mínimo y legible para entender lo esencial sin magia.
-          </InfoCard>
-          <InfoCard tag="✺" title="Eureka Labs">
-            Su apuesta: enseñar los fundamentos a una nueva generación.
-          </InfoCard>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 7 · LA TRAMPA
-  {
-    id: "s7",
-    label: "La trampa",
-    align: "start",
-    node: (
-      <div>
-        <Kicker orange>La letra pequeña</Kicker>
-        <h2 className="mt-3 text-4xl md:text-6xl">
-          <span className="font-normal text-white">El propio Karpathy avisó: </span>
-          <span className="display text-white">esto tiene trampa</span>
-          <span className="font-normal text-white">.</span>
-        </h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <InfoCard tag="⚠" title="La IA se traba">
-            “A veces no puede arreglar un bug y pido cambios al azar hasta que desaparece.”
-          </InfoCard>
-          <InfoCard tag="⚠" title="Deuda técnica oculta">
-            Código que nadie entiende = bugs escondidos y sistemas frágiles.
-          </InfoCard>
-          <InfoCard tag="⚠" title="Atrofia de habilidad">
-            Si la IA piensa por ti siempre, dejas de saber pensar el problema.
-          </InfoCard>
-        </div>
-        <p className="mt-8 text-[17px] text-white/85">
-          Él mismo lo dijo: ideal para <strong className="font-bold text-white">proyectos de fin de semana</strong>. No
-          para lo que tiene que <strong className="font-extrabold or">funcionar de verdad</strong>.
-        </p>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 8 · LA TESIS
-  {
-    id: "s8",
-    label: "La tesis",
-    align: "center",
-    node: (
-      <div className="mx-auto max-w-4xl">
-        <Kicker>El punto de todo esto</Kicker>
-        <h2 className="mt-4 text-5xl md:text-7xl display text-white">
-          El vibe coding es <span className="or">genial</span>.
-          <br />
-          Pero sin <span className="or">fundamentos</span>, te estancas.
-        </h2>
-        <p className="mx-auto mt-6 max-w-2xl text-[21px] text-white/85">
-          Las vibras te llevan lejos y rápido. Los fundamentos te dicen{" "}
-          <strong className="font-bold text-white">a dónde</strong>, y te traen de vuelta cuando algo se rompe.
-        </p>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 9 · LAS HERRAMIENTAS (stack para vibe codear)
-  {
-    id: "s9",
-    label: "Las herramientas",
-    align: "start",
-    node: (
-      <div>
-        <Kicker orange>Con qué lo construimos</Kicker>
-        <h2 className="mt-3 text-4xl md:text-6xl">
-          <span className="font-normal text-white">Las herramientas para </span>
-          <span className="display or">vibe codear con fundamentos</span>
-        </h2>
-        <p className="mt-5 max-w-2xl text-[20px] text-white/85">
-          En WindMar Home no solo vendemos energía: construimos nuestro propio software —{" "}
-          <strong className="font-bold text-white">cotizadores, dashboards y agentes de IA</strong>. Estas son las
-          piezas que nos dejan ir rápido sin perder el control.
-        </p>
-        <div className="mt-8 grid gap-x-10 gap-y-7 md:grid-cols-3">
-          <InfoCard tag="GitHub" title="Historia y red de seguridad" orange>
-            Versiona el código. Ramas, historial y colaboración: si algo se rompe, vuelves atrás.
-          </InfoCard>
-          <InfoCard tag="Vercel" title="Publicar en segundos" orange>
-            Cada cambio sube solo y queda en línea con su propia URL. Del código a producción sin fricción.
-          </InfoCard>
-          <InfoCard tag="Supabase" title="Backend al instante" orange>
-            Base de datos, usuarios y autenticación listos — sin montar ni mantener servidores.
-          </InfoCard>
-          <InfoCard tag="Next.js" title="La base de las apps" orange>
-            El framework (React) con el que construimos webs rápidas y listas para producción.
-          </InfoCard>
-          <InfoCard tag="Claude" title="El copiloto con criterio" orange>
-            Escribe y explica el código a tu lado: las vibras, pero con fundamentos detrás.
-          </InfoCard>
-          <InfoCard tag="n8n · Zoho" title="Todo conectado" orange>
-            Automatizaciones y CRM enlazados para que los datos fluyan entre cada herramienta.
-          </InfoCard>
-        </div>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 10 · POR QUÉ LOS FUNDAMENTOS
-  {
-    id: "s10",
-    label: "Por qué los fundamentos",
-    align: "start",
-    node: (
-      <div>
-        <Kicker>La lección que nos llevamos</Kicker>
-        <h2 className="mt-3 text-4xl md:text-6xl">
-          <span className="font-normal lav">En el código o en la energía, </span>
-          <span className="display lav">los fundamentos no se delegan</span>
-        </h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <InfoCard tag="01" title="Entender el sistema" bebas orange>
-            No basta con el resultado. Saber por qué funciona es lo que te deja mejorarlo.
-          </InfoCard>
-          <InfoCard tag="02" title="Saber depurar" bebas orange>
-            Cuando algo falla —y va a fallar— los fundamentos son los que lo arreglan.
-          </InfoCard>
-          <InfoCard tag="03" title="Diseñar para que dure" bebas orange>
-            Un sistema —solar o de software— se construye para resistir años, no un fin de semana.
-          </InfoCard>
-        </div>
-        <p className="mt-8 text-4xl md:text-6xl display text-white">
-          La IA <span className="or">acelera a quien sabe</span>. Y multiplica los{" "}
-          <span className="or">errores de quien no</span>.
-        </p>
-      </div>
-    ),
-  },
-
-  // ───────────────────────── 11 · CIERRE
-  {
-    id: "s11",
-    label: "Cierre",
+    label: "Claude Shannon",
     align: "center",
     node: (
       <div className="mx-auto max-w-3xl">
-        <h2 className="text-5xl md:text-7xl display lav">
-          Usa las <span className="or">vibras</span>.
-          <br />
-          Domina los <span className="or">fundamentos</span>.
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-[20px] font-medium text-white/90">
-          No es solo energía, ni solo código. Es saber lo que haces — para ti y para tu familia.
+        <Kicker>01 / El Fundamento</Kicker>
+        <h2 className="mt-4 text-5xl md:text-7xl display teal">Claude Shannon</h2>
+        <div className="mx-auto mt-5 h-px w-16 bg-teal-300/70" />
+        <p className="mx-auto mt-6 max-w-2xl text-[21px] text-white/85">
+          El padre de la era digital y la búsqueda incansable de la{" "}
+          <strong className="font-bold text-white">precisión frente al ruido</strong>.
         </p>
-        <div className="mt-10 inline-flex items-center gap-3 rounded-full glass px-6 py-3">
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 2 · LA OBSESIÓN POR EL BIT
+  {
+    id: "s2",
+    label: "La Obsesión por el Bit",
+    align: "start",
+    node: (
+      <div>
+        <Kicker>Shannon · La teoría</Kicker>
+        <h2 className="mt-3 text-4xl md:text-6xl">
+          <span className="font-normal text-white">La Obsesión por el </span>
+          <span className="display teal">Bit</span>
+        </h2>
+        <div className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-2">
+          <InfoCard tag="0 / 1" title="Reducción al Binario" bebas>
+            En su tesis de 1948 demostró que toda la información se puede codificar con ceros y unos. Convirtió la
+            comunicación en una ciencia exacta y matemática.
+          </InfoCard>
+          <InfoCard tag="↻" title="El ratón Theseus" bebas>
+            En 1950 construyó a Theseus, un ratón magnético capaz de aprender y resolver laberintos solo. El primer
+            ancestro mecánico de los agentes de IA actuales.
+          </InfoCard>
+        </div>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 3 · FOCO (foto Shannon)
+  {
+    id: "s3",
+    label: "Foco y Dedicación",
+    align: "start",
+    node: (
+      <div className="grid items-center gap-10 md:grid-cols-[1fr_260px]">
+        <div>
+          <Kicker>Concentración</Kicker>
+          <h2 className="mt-3 text-4xl md:text-6xl">
+            <span className="font-normal text-white">Foco y </span>
+            <span className="display teal">Dedicación Absoluta</span>
+          </h2>
+          <p className="mt-5 max-w-xl text-[19px] leading-relaxed text-white/85">
+            Shannon no solo teorizó: construyó sus propias máquinas. Su concentración era legendaria — meses aislado
+            perfeccionando ratones mecánicos y autómatas de ajedrez.
+          </p>
+          <p className="mt-4 max-w-xl text-[19px] leading-relaxed text-white/85">
+            El trabajo no era una tarea impuesta, sino un fin guiado por la{" "}
+            <strong className="font-bold text-white">pura curiosidad</strong>: volcar toda la mente en el problema, sin
+            ruido externo.
+          </p>
+        </div>
+        <Portrait src="/shannon.jpg" alt="Claude Shannon" />
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 4 · KARPATHY (sección)
+  {
+    id: "s4",
+    label: "Andrej Karpathy",
+    align: "center",
+    node: (
+      <div className="mx-auto max-w-3xl">
+        <Kicker cyan>02 / El Presente Exponencial</Kicker>
+        <h2 className="mt-4 text-5xl md:text-7xl display teal">Andrej Karpathy</h2>
+        <div className="mx-auto mt-5 h-px w-16 bg-teal-300/70" />
+        <p className="mx-auto mt-6 max-w-2xl text-[21px] text-white/85">
+          De programar redes neuronales línea por línea a{" "}
+          <strong className="font-bold text-white">orquestar código a través de la intuición</strong>.
+        </p>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 5 · LA ERA DEL VIBE CODING
+  {
+    id: "s5",
+    label: "La Era del Vibe Coding",
+    align: "start",
+    node: (
+      <div>
+        <Kicker>Karpathy · La práctica</Kicker>
+        <h2 className="mt-3 text-4xl md:text-6xl">
+          <span className="font-normal text-white">La Era del </span>
+          <span className="display teal">Vibe Coding</span>
+        </h2>
+        <div className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-3">
+          <InfoCard tag="›_" title="Olvidar la sintaxis" bebas>
+            Das el control a los LLMs para que generen el código. Te liberas de los detalles para centrarte en la
+            arquitectura.
+          </InfoCard>
+          <InfoCard tag="↗" title="Abrazar exponenciales" bebas>
+            El ritmo de creación se dispara: los prototipos se vuelven reales en minutos.
+          </InfoCard>
+          <InfoCard tag="🤖" title="Ingeniería agéntica" bebas>
+            Karpathy hoy prefiere llamarlo así: dirigir, vigilar y guiar entidades que programan por nosotros.
+          </InfoCard>
+        </div>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 6 · DE LA LÍNEA AL FLUJO (foto Karpathy)
+  {
+    id: "s6",
+    label: "De la Línea al Flujo",
+    align: "start",
+    node: (
+      <div className="grid items-center gap-10 md:grid-cols-[260px_1fr]">
+        <Portrait src="/karpathy.jpg" alt="Andrej Karpathy" />
+        <div>
+          <Kicker cyan>La intención es el idioma</Kicker>
+          <h2 className="mt-3 text-4xl md:text-6xl">
+            <span className="font-normal text-white">De la Línea al </span>
+            <span className="display teal">Flujo</span>
+          </h2>
+          <p className="mt-5 max-w-xl text-[19px] leading-relaxed text-white/85">
+            Excofundador de OpenAI y exdirector de IA en Tesla, mostró que escribir código tradicional ya no es el cuello
+            de botella. El programador moderno actúa como un{" "}
+            <strong className="font-bold text-white">director de orquesta</strong>.
+          </p>
+          <p className="mt-4 max-w-xl text-[19px] leading-relaxed text-white/85">
+            La mente humana define los flujos y la verificación; los LLMs materializan la sintaxis a partir de nuestra{" "}
+            <strong className="font-bold text-white">voluntad lingüística</strong>.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 7 · LA LEY DE LA VOLUNTAD (sección)
+  {
+    id: "s7",
+    label: "La Ley de la Voluntad",
+    align: "center",
+    node: (
+      <div className="mx-auto max-w-3xl">
+        <Kicker cyan>03 / La Conexión Filosófica</Kicker>
+        <h2 className="mt-4 text-5xl md:text-7xl display teal">La Ley de la Voluntad</h2>
+        <div className="mx-auto mt-5 h-px w-16 bg-teal-300/70" />
+        <p className="mx-auto mt-6 max-w-2xl text-[21px] text-white/85">
+          Cómo un clásico de la literatura universal describe perfectamente el éxito en el desarrollo de software
+          moderno.
+        </p>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 8 · LA FRASE DE DEMIAN (Hesse)
+  {
+    id: "s8",
+    label: "La Frase de Demian",
+    align: "center",
+    node: (
+      <div className="mx-auto max-w-4xl">
+        <Kicker>Hermann Hesse · Demian (1919)</Kicker>
+        <p className="mt-6 text-3xl md:text-5xl font-light italic leading-snug text-white">
+          “Si un animal o un ser humano concentra toda su{" "}
+          <span className="not-italic font-extrabold teal">atención</span> y su{" "}
+          <span className="not-italic font-extrabold teal">voluntad</span> en una cosa determinada, la consigue.”
+        </p>
+        <div className="mt-6 text-sm tracking-[0.2em] mist">— HERMANN HESSE</div>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 9 · LA COHERENCIA (Marco Aurelio)
+  {
+    id: "s9",
+    label: "La Coherencia",
+    align: "start",
+    node: (
+      <div>
+        <Kicker orange>Marco Aurelio · La coherencia</Kicker>
+        <h2 className="mt-3 text-4xl md:text-6xl">
+          <span className="font-normal text-white">Pensar, hablar y actuar — </span>
+          <span className="display teal">en acuerdo</span>
+        </h2>
+        <p className="mt-5 max-w-2xl text-[19px] text-white/85">
+          El emperador estoico lo resumió hace 19 siglos: la virtud es la coherencia entre lo que piensas, dices y
+          haces. El mismo principio gobierna el buen código.
+        </p>
+        <div className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-3">
+          <InfoCard tag="Pensar" title="= la intención">
+            Qué quieres construir y por qué. La arquitectura antes de la primera línea.
+          </InfoCard>
+          <InfoCard tag="Hablar" title="= el prompt">
+            El lenguaje con que se lo pides a la IA: claro, específico y honesto.
+          </InfoCard>
+          <InfoCard tag="Actuar" title="= el código" orange>
+            Lo que de verdad se ejecuta. Si los tres se alinean, el software es limpio.
+          </InfoCard>
+        </div>
+        <p className="mt-7 text-[19px] text-white/90">
+          Vibe coding sin coherencia es <strong className="font-bold text-white">ruido</strong>. Con coherencia, es{" "}
+          <strong className="font-extrabold or">voluntad ejecutada</strong>.
+        </p>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 10 · ATENCIÓN EN EL PROPÓSITO
+  {
+    id: "s10",
+    label: "Atención en el Propósito",
+    align: "start",
+    node: (
+      <div className="grid items-center gap-10 md:grid-cols-2">
+        <div className="text-center md:text-left">
+          <div className="font-bebas text-8xl md:text-9xl leading-none teal">100%</div>
+          <div className="mt-1 text-sm uppercase tracking-[0.25em] text-white/85">Atención intencional</div>
+        </div>
+        <div>
+          <h3 className="text-2xl md:text-3xl font-extrabold text-white">El poder de la voluntad despejada</h3>
+          <p className="mt-4 text-[18px] leading-relaxed text-white/85">
+            El vibe coding no se trata de pereza: es canalizar el 100% de la energía mental hacia el{" "}
+            <strong className="font-bold text-white">objetivo final</strong>. Al remover la barrera de la sintaxis, la
+            mente se concentra con intensidad pura en la idea.
+          </p>
+          <p className="mt-4 text-[18px] leading-relaxed text-white/85">
+            La tenacidad de Shannon frente a la entropía y la de Karpathy para automatizar demuestran la ley de Hesse:
+            la dedicación al propósito somete el medio para conseguir el fin.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 11 · EVOLUCIÓN DE LA CREACIÓN (tabla)
+  {
+    id: "s11",
+    label: "Evolución de la Creación",
+    align: "start",
+    node: (
+      <div>
+        <Kicker>La síntesis</Kicker>
+        <h2 className="mt-3 text-4xl md:text-6xl">
+          <span className="font-normal text-white">Evolución de la </span>
+          <span className="display teal">Creación</span>
+        </h2>
+        <div className="mt-7 overflow-hidden text-[15px] md:text-[16px]">
+          <div className="grid grid-cols-4 gap-x-4 border-b border-white/20 pb-3 font-bebas tracking-wide teal">
+            <div>Pilar</div>
+            <div>Shannon · Teoría</div>
+            <div>Karpathy · Práctica</div>
+            <div>Hesse · Filosofía</div>
+          </div>
+          {[
+            ["Elemento vital", "El bit (0 y 1)", "La intención natural", "La voluntad humana"],
+            ["La barrera", "El ruido en el canal", "La sintaxis del código", "La falta de enfoque"],
+            ["La herramienta", "Matemática de la información", "Agentes de IA", "La concentración pura"],
+            ["La meta", "Transmisión perfecta", "Software ágil", "Lograr el destino"],
+            ["La coherencia", "Transmitir sin distorsión", "Decir = ejecutar", "Querer = lograr"],
+          ].map((row, i) => (
+            <div
+              key={row[0]}
+              className={`grid grid-cols-4 gap-x-4 py-3 ${i < 4 ? "border-b border-white/10" : ""}`}
+            >
+              <div className="font-extrabold text-white">{row[0]}</div>
+              <div className="text-white/80">{row[1]}</div>
+              <div className="text-white/80">{row[2]}</div>
+              <div className="text-white/80">{row[3]}</div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-[13px] mist">La última fila —la coherencia— es la idea de Marco Aurelio que une a los tres.</p>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 12 · EL ECOSISTEMA (librerías + infra)
+  {
+    id: "s12",
+    label: "El Ecosistema",
+    align: "start",
+    node: (
+      <div>
+        <Kicker cyan>El ecosistema</Kicker>
+        <h2 className="mt-3 text-4xl md:text-6xl">
+          <span className="font-normal text-white">Cada herramienta, </span>
+          <span className="display teal">útil a su manera</span>
+        </h2>
+        <p className="mt-4 max-w-2xl text-[18px] text-white/85">
+          No existe una sola herramienta: cada una resuelve algo. Así se construye software real — en{" "}
+          <strong className="font-bold or">WindMar Home</strong> y en cualquier lugar.
+        </p>
+        <div className="mt-7 grid gap-x-8 gap-y-5 md:grid-cols-3">
+          <InfoCard tag="React" title="Interfaces por componentes">
+            La librería estándar para construir la web moderna, pieza a pieza.
+          </InfoCard>
+          <InfoCard tag="Three.js" title="3D en el navegador">
+            El motor que hace posible esta galaxia y sus planetas.
+          </InfoCard>
+          <InfoCard tag="Tailwind" title="Estilos sin fricción">
+            Diseño rápido y consistente sin salir del marcado.
+          </InfoCard>
+          <InfoCard
+            tag={
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/logo-github.png" alt="GitHub" style={{ height: 32, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+            }
+            title="Historia y colaboración"
+            orange
+          >
+            Versiona el código y trabaja en equipo. Tu red de seguridad.
+          </InfoCard>
+          <InfoCard
+            tag={
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/logo-vercel.png" alt="Vercel" style={{ height: 32, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+            }
+            title="Deploy instantáneo"
+            orange
+          >
+            De un push a producción en segundos. Frontend y edge functions.
+          </InfoCard>
+          <InfoCard
+            tag={
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/logo-supabase.png" alt="Supabase" style={{ height: 32, objectFit: "contain" }} />
+            }
+            title="Backend al instante"
+            orange
+          >
+            Base de datos, usuarios y auth — sin montar servidores.
+          </InfoCard>
+        </div>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 13 · SOBRE HOMBROS DE GIGANTES
+  {
+    id: "s13",
+    label: "Sobre hombros de gigantes",
+    align: "center",
+    node: (
+      <div className="mx-auto max-w-3xl">
+        <Kicker>El privilegio</Kicker>
+        <h2 className="mt-4 text-4xl md:text-6xl display teal">Sobre hombros de gigantes</h2>
+        <p className="mt-6 text-2xl md:text-3xl font-light italic leading-snug text-white">
+          “Si he visto más lejos, es porque estoy sentado sobre los hombros de gigantes.”
+        </p>
+        <div className="mt-3 text-sm tracking-[0.2em] mist">— ISAAC NEWTON</div>
+        <p className="mx-auto mt-7 max-w-2xl text-[19px] leading-relaxed text-white/85">
+          Cada prompt que escribes hoy descansa sobre décadas de trabajo: el bit de{" "}
+          <strong className="font-bold text-white">Shannon</strong>, las redes de{" "}
+          <strong className="font-bold text-white">Karpathy</strong>, la voluntad de{" "}
+          <strong className="font-bold text-white">Hesse</strong>, la coherencia de{" "}
+          <strong className="font-bold text-white">Marco Aurelio</strong> — y de miles que{" "}
+          <strong className="font-bold teal">aún trabajan</strong>. Tener IA hoy no es un derecho: es un{" "}
+          <strong className="font-extrabold or">privilegio construido por gigantes</strong>.
+        </p>
+        <p className="mt-6 text-[18px] font-medium text-white/90">
+          Úsala con intención. Con gratitud. Con fundamentos.
+        </p>
+      </div>
+    ),
+  },
+
+  // ───────────────────────── 14 · CIERRE
+  {
+    id: "s14",
+    label: "Cierre",
+    align: "center",
+    node: (
+      <div className="mx-auto max-w-4xl">
+        <h2 className="text-5xl md:text-7xl display teal">La voluntad encuentra el camino.</h2>
+        <p className="mx-auto mt-6 max-w-xl text-[20px] font-medium text-white/90">
+          Pensar, decir y hacer — en una sola dirección.
+        </p>
+        <p className="mx-auto mt-3 text-[15px] tracking-wide mist">
+          Un privilegio heredado. Hagámoslo valer.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm tracking-[0.18em] mist">
+          <span>SHANNON</span><span className="text-white/30">·</span>
+          <span>KARPATHY</span><span className="text-white/30">·</span>
+          <span>HESSE</span><span className="text-white/30">·</span>
+          <span>MARCO AURELIO</span>
+        </div>
+        <div className="mt-8 inline-flex items-center gap-3 rounded-full glass px-6 py-3">
           <span className="text-xl font-black tracking-tight text-white">WINDMAR</span>
           <span className="text-xl font-light tracking-[0.3em] or">HOME</span>
         </div>

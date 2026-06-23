@@ -19,12 +19,12 @@ type Part = {
   dead: boolean;
 };
 
-// WindMar palette: brand orange, warm gold, light blue, brand blue
+// teal / cyan + orange accent + white
 const PALETTE: [number, number, number][] = [
+  [46, 230, 197],
+  [56, 189, 248],
   [248, 155, 36],
-  [255, 200, 130],
-  [150, 185, 255],
-  [80, 130, 235],
+  [255, 255, 255],
 ];
 
 export default function ParticleText({

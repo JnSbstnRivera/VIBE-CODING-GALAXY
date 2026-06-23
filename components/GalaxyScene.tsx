@@ -1,31 +1,36 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Line } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Line, Stars, Sparkles, useTexture } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette, Noise } from "@react-three/postprocessing";
+import { createNoise2D } from "simplex-noise";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { slides } from "./slides";
 
-const N = 12;
+const N = slides.length;
 
-// WindMar planet accents
+// teal / cyan + orange accents
 const ACCENTS = [
+  "#2ee6c5",
+  "#38bdf8",
   "#f89b24",
-  "#ffc06a",
-  "#7ea6ff",
-  "#1d6bff",
-  "#ff8a3c",
-  "#a9c2ff",
+  "#5eead4",
+  "#67d4ff",
   "#ffb24d",
-  "#4f86ff",
-  "#ffd29a",
-  "#6ea0ff",
+  "#22d3ee",
+  "#34e3c4",
+  "#7dd3fc",
   "#f89b24",
-  "#9ab8ff",
+  "#2ee6c5",
+  "#5cc8ff",
+  "#ffb24d",
+  "#5eead4",
 ];
 
 function planetPos(i: number) {
   const ang = i * 2.3 + 0.6;
-  const rad = 7 + i * 2.15;
+  const rad = 7 + i * 2.1;
   return new THREE.Vector3(Math.cos(ang) * rad, Math.sin(i * 0.7) * 3, Math.sin(ang) * rad);
 }
 
@@ -63,82 +68,47 @@ function makeNebTex(rgb: string) {
   return new THREE.CanvasTexture(c);
 }
 
-// distant starfield dome — deep space all around
-function FarStars() {
-  const ref = useRef<THREE.Points>(null);
-  const tex = useMemo(() => makeStarTex(), []);
-  const { pos, col } = useMemo(() => {
-    const n = 2800;
-    const p = new Float32Array(n * 3);
-    const c = new Float32Array(n * 3);
-    const tint = new THREE.Color("#cfe0ff");
-    for (let i = 0; i < n; i++) {
-      const r = 75 + Math.random() * 65;
-      const th = Math.random() * Math.PI * 2;
-      const ph = Math.acos(Math.random() * 2 - 1);
-      p.set([r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)], i * 3);
-      const cc = tint.clone().offsetHSL((Math.random() - 0.5) * 0.12, 0, (Math.random() - 0.5) * 0.35);
-      c.set([cc.r, cc.g, cc.b], i * 3);
+// rich procedural planet surface via simplex-noise (fBm + latitude bands)
+function makePlanetTexture(hex: string) {
+  const noise = createNoise2D();
+  const s = 256;
+  const c = document.createElement("canvas");
+  c.width = c.height = s;
+  const g = c.getContext("2d")!;
+  const base = new THREE.Color(hex);
+  const img = g.createImageData(s, s);
+  const d = img.data;
+  const tmp = new THREE.Color();
+  for (let y = 0; y < s; y++) {
+    for (let x = 0; x < s; x++) {
+      let n = 0,
+        amp = 0.5,
+        freq = 0.014;
+      for (let o = 0; o < 5; o++) {
+        n += noise(x * freq, y * freq) * amp;
+        freq *= 2;
+        amp *= 0.5;
+      }
+      n += Math.sin(y * 0.05) * 0.22; // gas-giant banding
+      const pole = 1 - Math.abs((y / s) * 2 - 1) * 0.5; // darker poles
+      const l = THREE.MathUtils.clamp(0.5 + n * 0.55, 0, 1) * pole;
+      tmp.copy(base).offsetHSL(0, (n) * 0.06, (l - 0.5) * 0.75);
+      const idx = (y * s + x) * 4;
+      d[idx] = (tmp.r * 255) | 0;
+      d[idx + 1] = (tmp.g * 255) | 0;
+      d[idx + 2] = (tmp.b * 255) | 0;
+      d[idx + 3] = 255;
     }
-    return { pos: p, col: c };
-  }, []);
-  useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.004;
-  });
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[pos, 3]} />
-        <bufferAttribute attach="attributes-color" args={[col, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.8}
-        map={tex}
-        sizeAttenuation
-        vertexColors
-        transparent
-        opacity={0.7}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
-  );
-}
-
-// drifting nebula clouds (orange / blue / violet) far behind
-function NebulaClouds() {
-  const ref = useRef<THREE.Group>(null);
-  const clouds = useMemo(
-    () => [
-      { p: [-48, 8, -58] as [number, number, number], s: 72, rgb: "248,150,50" },
-      { p: [56, -12, -64] as [number, number, number], s: 84, rgb: "40,90,220" },
-      { p: [6, 30, -88] as [number, number, number], s: 98, rgb: "130,80,255" },
-    ],
-    []
-  );
-  const texes = useMemo(() => clouds.map((c) => makeNebTex(c.rgb)), [clouds]);
-  useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.006;
-  });
-  return (
-    <group ref={ref}>
-      {clouds.map((c, i) => (
-        <sprite key={i} position={c.p} scale={[c.s, c.s, 1]}>
-          <spriteMaterial
-            map={texes[i]}
-            transparent
-            opacity={0.5}
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-          />
-        </sprite>
-      ))}
-    </group>
-  );
+  }
+  g.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
 }
 
 function Galaxy() {
   const ref = useRef<THREE.Points>(null);
+  const tex = useMemo(() => makeStarTex(), []);
   const { positions, colors } = useMemo(() => {
     const count = 11000;
     const radius = 32;
@@ -146,38 +116,24 @@ function Galaxy() {
     const spin = 1.1;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
-    const inside = new THREE.Color("#ffb066");
-    const outside = new THREE.Color("#2f6bff");
+    const inside = new THREE.Color("#9ff5e0");
+    const outside = new THREE.Color("#2bb8ff");
     for (let i = 0; i < count; i++) {
       const r = Math.pow(Math.random(), 1.6) * radius;
       const branch = ((i % branches) / branches) * Math.PI * 2;
       const spinA = r * spin * 0.08;
-      const rand = () => (Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.12 + 0.5));
+      const rand = () => Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.12 + 0.5);
       const x = Math.cos(branch + spinA) * r + rand();
       const y = rand() * 0.5;
       const z = Math.sin(branch + spinA) * r + rand();
       positions.set([x, y, z], i * 3);
       const c = inside.clone().lerp(outside, Math.min(1, r / radius));
-      if (Math.random() < 0.08) c.set("#ffffff");
+      const roll = Math.random();
+      if (roll < 0.07) c.set("#f89b24"); // orange sparkle
+      else if (roll < 0.14) c.set("#ffffff");
       colors.set([c.r, c.g, c.b], i * 3);
     }
     return { positions, colors };
-  }, []);
-
-  // soft round star sprite (kills the square-pixel look)
-  const starTex = useMemo(() => {
-    const s = 64;
-    const c = document.createElement("canvas");
-    c.width = c.height = s;
-    const g = c.getContext("2d")!;
-    const rad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    rad.addColorStop(0, "rgba(255,255,255,1)");
-    rad.addColorStop(0.25, "rgba(255,255,255,0.9)");
-    rad.addColorStop(0.55, "rgba(255,255,255,0.32)");
-    rad.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = rad;
-    g.fillRect(0, 0, s, s);
-    return new THREE.CanvasTexture(c);
   }, []);
 
   useFrame((_, dt) => {
@@ -192,7 +148,7 @@ function Galaxy() {
       </bufferGeometry>
       <pointsMaterial
         size={0.55}
-        map={starTex}
+        map={tex}
         sizeAttenuation
         vertexColors
         transparent
@@ -204,53 +160,46 @@ function Galaxy() {
   );
 }
 
-// procedural cratered/banded planet texture so planets aren't flat
-function makePlanetTexture(hex: string) {
-  const s = 256;
-  const c = document.createElement("canvas");
-  c.width = c.height = s;
-  const g = c.getContext("2d")!;
-  const base = new THREE.Color(hex);
-  const rgb = (col: THREE.Color, a: number) =>
-    `rgba(${(col.r * 255) | 0},${(col.g * 255) | 0},${(col.b * 255) | 0},${a})`;
-  g.fillStyle = rgb(base, 1);
-  g.fillRect(0, 0, s, s);
-  // gas-giant bands
-  for (let y = 0; y < s; y++) {
-    const d = Math.sin(y * 0.05) * 0.14 + Math.sin(y * 0.013) * 0.1 + (Math.random() - 0.5) * 0.04;
-    g.fillStyle = rgb(base.clone().offsetHSL(0, 0, d), 0.22);
-    g.fillRect(0, y, s, 1);
-  }
-  // craters / mottling
-  for (let i = 0; i < 1500; i++) {
-    const x = Math.random() * s,
-      y = Math.random() * s,
-      r = Math.random() * 6 + 0.6;
-    const col = base.clone().offsetHSL(0, (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.6);
-    g.fillStyle = rgb(col, 0.08 + Math.random() * 0.22);
-    g.beginPath();
-    g.arc(x, y, r, 0, Math.PI * 2);
-    g.fill();
-  }
-  // polar caps (lighter)
-  const cap = (yc: number) => {
-    const grd = g.createRadialGradient(s / 2, yc, 2, s / 2, yc, s * 0.42);
-    grd.addColorStop(0, rgb(base.clone().offsetHSL(0, -0.25, 0.4), 0.5));
-    grd.addColorStop(1, rgb(base, 0));
-    g.fillStyle = grd;
-    g.fillRect(0, 0, s, s);
-  };
-  cap(0);
-  cap(s);
-  // soft sheen
-  const sh = g.createRadialGradient(s * 0.34, s * 0.3, 2, s * 0.34, s * 0.3, s * 0.55);
-  sh.addColorStop(0, "rgba(255,255,255,0.18)");
-  sh.addColorStop(1, "rgba(255,255,255,0)");
-  g.fillStyle = sh;
-  g.fillRect(0, 0, s, s);
-  const t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  return t;
+function NebulaClouds() {
+  const ref = useRef<THREE.Group>(null);
+  const clouds = useMemo(
+    () => [
+      { p: [-48, 8, -58] as [number, number, number], s: 72, rgb: "46,230,197" },
+      { p: [56, -12, -64] as [number, number, number], s: 84, rgb: "56,189,248" },
+      { p: [6, 30, -88] as [number, number, number], s: 98, rgb: "248,155,36" },
+    ],
+    []
+  );
+  const texes = useMemo(() => clouds.map((c) => makeNebTex(c.rgb)), [clouds]);
+  useFrame((_, dt) => {
+    if (ref.current) ref.current.rotation.y += dt * 0.006;
+  });
+  return (
+    <group ref={ref}>
+      {clouds.map((c, i) => (
+        <sprite key={i} position={c.p} scale={[c.s, c.s, 1]}>
+          <spriteMaterial
+            map={texes[i]}
+            transparent
+            opacity={0.45}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
+        </sprite>
+      ))}
+    </group>
+  );
+}
+
+// real deep-field photo on an inverted sphere → authentic deep space
+function NebulaSky() {
+  const tex = useTexture("/nebula.jpg");
+  return (
+    <mesh scale={[-1, 1, 1]}>
+      <sphereGeometry args={[220, 40, 40]} />
+      <meshBasicMaterial map={tex} side={THREE.BackSide} transparent opacity={0.5} depthWrite={false} toneMapped={false} />
+    </mesh>
+  );
 }
 
 function Planet({ i, pos, color, ring }: { i: number; pos: THREE.Vector3; color: string; ring?: boolean }) {
@@ -301,48 +250,16 @@ function Planet({ i, pos, color, ring }: { i: number; pos: THREE.Vector3; color:
           metalness={0.12}
         />
       </mesh>
-      {/* glow shell */}
       <mesh scale={1.45}>
         <sphereGeometry args={[0.8, 18, 18]} />
         <meshBasicMaterial color={color} transparent opacity={0.07} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
-      {/* ring (some planets) */}
       {ring && (
         <mesh rotation={[Math.PI / 2.4, 0, 0.3]}>
           <ringGeometry args={[1.25, 1.95, 64]} />
           <meshBasicMaterial color={color} transparent opacity={0.35} side={THREE.DoubleSide} depthWrite={false} />
         </mesh>
       )}
-    </group>
-  );
-}
-
-function Asteroids() {
-  const ref = useRef<THREE.Group>(null);
-  const rocks = useMemo(
-    () =>
-      Array.from({ length: 70 }, () => ({
-        p: [
-          (Math.random() * 2 - 1) * 40,
-          (Math.random() * 2 - 1) * 14,
-          (Math.random() * 2 - 1) * 40,
-        ] as [number, number, number],
-        s: 0.12 + Math.random() * 0.32,
-        r: [Math.random() * 6, Math.random() * 6, Math.random() * 6] as [number, number, number],
-      })),
-    []
-  );
-  useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.012;
-  });
-  return (
-    <group ref={ref}>
-      {rocks.map((rk, i) => (
-        <mesh key={i} position={rk.p} scale={rk.s} rotation={rk.r}>
-          <dodecahedronGeometry args={[0.5, 0]} />
-          <meshStandardMaterial color="#566075" roughness={1} metalness={0.1} />
-        </mesh>
-      ))}
     </group>
   );
 }
@@ -393,13 +310,19 @@ export default function GalaxyScene() {
       gl={{ antialias: true, alpha: true }}
     >
       <ambientLight intensity={0.6} />
-      <pointLight position={[0, 0, 0]} intensity={2.2} color="#ffae57" distance={150} decay={1.5} />
-      <pointLight position={[20, 10, 20]} intensity={0.6} color="#3a6cff" distance={120} decay={1.7} />
-      <FarStars />
+      <pointLight position={[0, 0, 0]} intensity={1.8} color="#5fe9d0" distance={150} decay={1.5} />
+      <pointLight position={[20, 10, 20]} intensity={0.6} color="#f89b24" distance={120} decay={1.7} />
+
+      <Suspense fallback={null}>
+        <NebulaSky />
+      </Suspense>
+      <Stars radius={140} depth={70} count={3500} factor={4} saturation={0} fade speed={0.6} />
+      <Sparkles count={70} scale={[70, 34, 70]} size={3} speed={0.25} color="#9ff5e0" opacity={0.7} />
       <NebulaClouds />
       <Galaxy />
+
       {positions.map((p, i) => (
-        <Planet key={i} i={i} pos={p} color={ACCENTS[i % ACCENTS.length]} ring={i === 3 || i === 7 || i === 10} />
+        <Planet key={i} i={i} pos={p} color={ACCENTS[i % ACCENTS.length]} ring={i === 3 || i === 7 || i === 11} />
       ))}
       {positions.slice(0, -1).map((p, i) => (
         <Line
@@ -408,15 +331,21 @@ export default function GalaxyScene() {
             [p.x, p.y, p.z],
             [positions[i + 1].x, positions[i + 1].y, positions[i + 1].z],
           ]}
-          color="#5a86ff"
+          color="#3fe0c8"
           lineWidth={1}
           transparent
-          opacity={0.28}
+          opacity={0.26}
           dashed={false}
         />
       ))}
-      <Asteroids />
+
       <Rig positions={positions} />
+
+      <EffectComposer>
+        <Bloom intensity={0.75} luminanceThreshold={0.25} luminanceSmoothing={0.4} mipmapBlur />
+        <Vignette offset={0.22} darkness={0.9} eskil={false} />
+        <Noise opacity={0.04} />
+      </EffectComposer>
     </Canvas>
   );
 }

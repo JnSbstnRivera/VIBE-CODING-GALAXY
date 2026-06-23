@@ -68,8 +68,8 @@ export default function Deck() {
             key={i}
             className="h-2 w-2 rounded-full transition-all"
             style={{
-              background: i === active ? "#f89b24" : "rgba(255,255,255,0.25)",
-              boxShadow: i === active ? "0 0 10px #f89b24" : "none",
+              background: i === active ? "#2ee6c5" : "rgba(255,255,255,0.25)",
+              boxShadow: i === active ? "0 0 10px #2ee6c5" : "none",
               transform: i === active ? "scale(1.4)" : "scale(1)",
             }}
           />
