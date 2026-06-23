@@ -59,7 +59,7 @@ export default function Deck() {
       <div style={{ height: `${slides.length * 100}vh` }} aria-hidden />
 
       {/* floating content for the focused planet (frameless) */}
-      <div className="pointer-events-none fixed inset-0 z-10 flex items-center">
+      <div className="pointer-events-none fixed inset-0 z-10 flex items-center py-16 overflow-hidden">
         <div ref={overlayRef} className="w-full px-[7vw]">
           <div
             key={active}

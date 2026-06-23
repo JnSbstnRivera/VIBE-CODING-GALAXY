@@ -9,26 +9,23 @@ const Kicker = ({ children, cyan }: { children: ReactNode; cyan?: boolean }) => 
 
 // frameless titled item (icon/word + title + text)
 const InfoCard = ({
-  tag,
-  title,
-  children,
-  bebas,
-  orange,
+  tag, title, children, bebas, orange, href,
 }: {
-  tag: ReactNode;
-  title: string;
-  children: ReactNode;
-  bebas?: boolean;
-  orange?: boolean;
-}) => (
-  <div className="glass p-3">
-    <div className={`${bebas ? "font-bebas text-3xl" : "text-2xl font-extrabold"} ${orange ? "or" : "teal"} leading-none`}>
-      {tag}
+  tag: ReactNode; title: string; children: ReactNode; bebas?: boolean; orange?: boolean; href?: string;
+}) => {
+  const body = (
+    <div className={`glass p-2.5 ${href ? "transition-colors hover:bg-white/5" : ""}`}>
+      <div className={`${bebas ? "font-bebas text-3xl" : "text-2xl font-extrabold"} ${orange ? "or" : "teal"} leading-none`}>
+        {tag}
+      </div>
+      <div className="mt-1.5 text-[16px] font-extrabold text-white">{title}</div>
+      <p className="mt-1 text-[13px] leading-relaxed text-white/80">{children}</p>
     </div>
-    <div className="mt-2 text-[18px] font-extrabold text-white">{title}</div>
-    <p className="mt-1 text-[15px] leading-relaxed text-white/85">{children}</p>
-  </div>
-);
+  );
+  return href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>{body}</a>
+  ) : body;
+};
 
 const Portrait = ({ src, alt }: { src: string; alt: string }) => (
   <div className="flex justify-center">
@@ -266,7 +263,7 @@ export const slides: Slide[] = [
           El emperador estoico lo resumió hace 19 siglos: la virtud es la coherencia entre lo que piensas, dices y
           haces. El mismo principio gobierna el buen código.
         </p>
-        <div className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-3">
+        <div className="mt-5 grid gap-x-8 gap-y-4 md:grid-cols-3">
           <InfoCard tag="Pensar" title="= la intención">
             Qué quieres construir y por qué. La arquitectura antes de la primera línea.
           </InfoCard>
@@ -324,7 +321,7 @@ export const slides: Slide[] = [
           <span className="font-normal text-white">Evolución de la </span>
           <span className="display teal">Creación</span>
         </h2>
-        <div className="mt-7 overflow-hidden text-[15px] md:text-[16px]">
+        <div className="mt-4 overflow-hidden text-[13px] md:text-[14px]">
           <div className="grid grid-cols-4 gap-x-4 border-b border-white/20 pb-3 font-bebas tracking-wide teal">
             <div>Pilar</div>
             <div>Shannon · Teoría</div>
@@ -370,43 +367,48 @@ export const slides: Slide[] = [
           No existe una sola herramienta: cada una resuelve algo. Así se construye software real — en{" "}
           <strong className="font-bold or">WindMar Home</strong> y en cualquier lugar.
         </p>
-        <div className="mt-7 grid gap-x-8 gap-y-5 md:grid-cols-3">
-          <InfoCard tag="React" title="Interfaces por componentes">
+        <div className="mt-5 grid gap-x-6 gap-y-3 md:grid-cols-3">
+          <InfoCard tag="React" title="Interfaces por componentes" href="https://react.dev">
             La librería estándar para construir la web moderna, pieza a pieza.
           </InfoCard>
-          <InfoCard tag="Three.js" title="3D en el navegador">
+          <InfoCard tag="Three.js" title="3D en el navegador" href="https://threejs.org">
             El motor que hace posible esta galaxia y sus planetas.
           </InfoCard>
-          <InfoCard tag="Tailwind" title="Estilos sin fricción">
+          <InfoCard tag="Tailwind" title="Estilos sin fricción" href="https://tailwindcss.com">
             Diseño rápido y consistente sin salir del marcado.
           </InfoCard>
           <InfoCard
             tag={
               // eslint-disable-next-line @next/next/no-img-element
-              <img src="/logo-github.png" alt="GitHub" style={{ height: 32, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+              <img src="/logo-github.png" alt="GitHub" style={{ height: 28, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
             }
             title="Historia y colaboración"
             orange
+            href="https://github.com"
           >
             Versiona el código y trabaja en equipo. Tu red de seguridad.
           </InfoCard>
           <InfoCard
             tag={
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src="/logo-vercel.png" alt="Vercel" style={{ height: 32, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+              <svg viewBox="0 0 116 100" style={{ height: 28, display: "block" }} fill="white">
+                <path d="M57.5 0L115 100H0L57.5 0z" />
+              </svg>
             }
             title="Deploy instantáneo"
             orange
+            href="https://vercel.com"
           >
             De un push a producción en segundos. Frontend y edge functions.
           </InfoCard>
           <InfoCard
             tag={
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src="/logo-supabase.png" alt="Supabase" style={{ height: 32, objectFit: "contain" }} />
+              <svg viewBox="0 0 24 24" style={{ height: 28, display: "block" }} fill="#3ecf8e">
+                <path d="M11.9 1.036c-.015-.986-1.26-1.41-1.874-.637L.764 12.05C.1 12.888.697 14.064 1.762 14.064h9.52l.002 8.9c.015.987 1.26 1.41 1.874.638l9.261-11.653c.664-.838.067-2.013-.998-2.013h-9.522L11.9 1.036z" />
+              </svg>
             }
             title="Backend al instante"
             orange
+            href="https://supabase.com"
           >
             Base de datos, usuarios y auth — sin montar servidores.
           </InfoCard>
