@@ -75,7 +75,7 @@ export default function ParticleText({
         const mid = Math.ceil(words.length / 2);
         lines = [words.slice(0, mid).join(" "), words.slice(mid).join(" ")];
         const longer = lines[0].length >= lines[1].length ? lines[0] : lines[1];
-        size = fitFont(o, longer, W, H);
+        size = fitFont(o, longer, W, Math.floor(H / lines.length));
       }
       o.font = `900 ${size}px Arial, Helvetica, sans-serif`;
       const lh = size * 1.05;
